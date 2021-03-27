@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
             future: futureNews,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                print(snapshot.data[0].imageUrl);
+                // print(snapshot.data[0].tags[0].label);
                 return ListView.separated(
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
@@ -80,7 +80,10 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(child: Text(snapshot.data[index].authors)),
-                          Expanded(child: Text(snapshot.data[index].date)),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                            child: Text(snapshot.data[index].date),
+                          ),
                         ],
                       ),
                       onTap: () {
@@ -94,6 +97,7 @@ class _HomePageState extends State<HomePage> {
                                 date: snapshot.data[index].date,
                                 image: StringUtils.addCharAtPosition(snapshot.data[index].imageUrl, 's', 4),
                                 website: snapshot.data[index].website,
+                                tags: snapshot.data[index].tags[0],
                               ),
                             ));
                       },
