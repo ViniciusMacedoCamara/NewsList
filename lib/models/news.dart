@@ -18,6 +18,7 @@ class News {
     date = json['date'];
     content = json['content'];
     if (json['tags'] != null) {
+      // ignore: deprecated_member_use
       tags = new List<Tags>();
       json['tags'].forEach((v) {
         tags.add(new Tags.fromJson(v));
