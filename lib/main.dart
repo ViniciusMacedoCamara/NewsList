@@ -1,9 +1,9 @@
-import 'dart:convert';
-
 import 'package:baking_news_list/models/tags.dart';
 import 'package:baking_news_list/services/webservice.dart';
+import 'package:baking_news_list/splashscreen.dart';
 import 'package:baking_news_list/view/newsTile.dart';
 import 'package:basic_utils/basic_utils.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
@@ -12,10 +12,9 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'view/details.dart';
-import 'package:grouped_list/grouped_list.dart';
 
 void main() {
-  runApp(NewsList());
+  runApp(SplashScreenPage());
 }
 
 class NewsList extends StatelessWidget {
@@ -69,10 +68,8 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[
           PopupMenuButton<MenuOption>(
               onSelected: (MenuOption result) {
-                print(result);
                 if (result.index == 0) {
                   setState(() {
-                    // novas = [_news];
                     Comparator<News> dateSort = (a, b) => a.date.compareTo(b.date);
                     newsDataView.sort(dateSort);
                   });
@@ -155,9 +152,11 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (context, index) {
                     return ListTile(
                       // contentPadding: EdgeInsets.fromLTRB(0, 0, 16, 0), // Can uncomment this to make image touch the left side of the screen
-                      leading: Image.network(
-                        StringUtils.addCharAtPosition(
-                            newsDataView.elementAt(index).imageUrl, 's', 4), // I added the 's' char because of this -> https://flutter.dev/docs/release/breaking-changes/network-policy-ios-android
+                      leading: CachedNetworkImage(
+                        placeholder: (context, url) => CircularProgressIndicator(),
+                        imageUrl: StringUtils.addCharAtPosition(
+                            newsDataView.elementAt(index).imageUrl, 's', 4), // I added the 's' char because of this -> https://flutter.dev/docs/release/breaking-changes/network-policy-ios-android,
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                       title: Text(
                         newsDataView.elementAt(index).title,
@@ -193,6 +192,7 @@ class _HomePageState extends State<HomePage> {
                       onLongPress: () {
                         setState(() {
                           newsDataView.elementAt(index).test = false;
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Item ' + (index + 1).toString() + ' is now marked as Unread')));
                         });
                       },
                     );
@@ -205,7 +205,33 @@ class _HomePageState extends State<HomePage> {
                   },
                 );
               } else if (snapshot.hasError) {
-                return Text('data has error');
+                return SingleChildScrollView(
+                  child: Container(
+                    child: Column(
+                      children: [
+                        Image.asset('assets/img/dino.png'),
+                        Text('Oops'),
+                        Text('Looks like you don\'t'),
+                        Text('have internet connection.'),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 36, 0, 0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                futureNews = new WebService().fetchNews();
+                              });
+                            },
+                            child: Text('Retry Connection'),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 36, 0, 0),
+                          child: Text('Made with ❤ by Vinicius Macedo Camara'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               }
               return CircularProgressIndicator();
             },

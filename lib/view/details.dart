@@ -1,4 +1,5 @@
 import 'package:baking_news_list/models/tags.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,7 +37,12 @@ class Detail extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Image.network(image, fit: BoxFit.fitWidth),
+                CachedNetworkImage(
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  imageUrl: image,
+                  fit: BoxFit.fitWidth,
+                ),
+                // Image.network(image, fit: BoxFit.fitWidth),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
