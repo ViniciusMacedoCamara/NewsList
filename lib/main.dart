@@ -1,4 +1,6 @@
 import 'dart:convert';
+// import 'dart:html';
+// import 'dart:html';
 
 import 'package:baking_news_list/models/tags.dart';
 import 'package:baking_news_list/services/webservice.dart';
@@ -9,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
 import 'package:baking_news_list/models/news.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'view/details.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -56,6 +59,9 @@ class _HomePageState extends State<HomePage> {
   List<String> enumValues = [];
   final String whichSort = 'Sort by ';
   bool isPassed = false;
+  List<bool> isTouched = [];
+  TextStyle notTouched = GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold);
+  TextStyle touched = GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.normal);
 
   List news = [];
 
@@ -120,8 +126,6 @@ class _HomePageState extends State<HomePage> {
                     novas;
                   });
                 }
-                print(result);
-                print(novas.toList().toString());
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sorted by ' + enumValues.elementAt(result.index))));
               },
               icon: Icon(Icons.sort),
@@ -175,9 +179,11 @@ class _HomePageState extends State<HomePage> {
                       imageUrl: snapshot.data[i].imageUrl,
                       website: snapshot.data[i].website,
                       tags: snapshot.data[i].tags,
+                      test: false,
                     );
 
                     novas.add(_news);
+                    isTouched.add(false);
 
                     // print(_news.title);
                     // var newsInfo = {
@@ -201,11 +207,15 @@ class _HomePageState extends State<HomePage> {
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
                     return ListTile(
+                      // contentPadding: EdgeInsets.symmetric(horizontal: 0.0),
                       leading: Image.network(
                         StringUtils.addCharAtPosition(
                             novas.elementAt(index).imageUrl, 's', 4), // I added the 's' char because of this -> https://flutter.dev/docs/release/breaking-changes/network-policy-ios-android
                       ),
-                      title: Text(novas.elementAt(index).title),
+                      title: Text(
+                        novas.elementAt(index).title,
+                        style: novas.elementAt(index).test ? touched : notTouched,
+                      ),
                       subtitle: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -214,6 +224,10 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       onTap: () {
+                        print('item ' + index.toString() + ' was touched');
+                        setState(() {
+                          novas.elementAt(index).test = true;
+                        });
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -225,9 +239,16 @@ class _HomePageState extends State<HomePage> {
                               image: StringUtils.addCharAtPosition(novas.elementAt(index).imageUrl, 's', 4),
                               website: novas.elementAt(index).website,
                               tags: novas.elementAt(index).tags.elementAt(0),
+                              touched: novas.elementAt(index).test,
                             ),
                           ),
                         );
+                      },
+                      onLongPress: () {
+                        setState(() {
+                          novas.elementAt(index).test = false;
+                        });
+                        print('LOOOOOOOOOOOOONG');
                       },
                     );
                   },

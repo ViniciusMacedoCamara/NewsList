@@ -12,6 +12,7 @@ class Detail extends StatelessWidget {
     @required this.content,
     @required this.tags,
     @required this.image,
+    @required this.touched,
   });
 
   final String title;
@@ -21,6 +22,7 @@ class Detail extends StatelessWidget {
   final String content;
   final Tags tags;
   final String image;
+  final bool touched;
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +69,16 @@ class Detail extends StatelessWidget {
                     Text('Source: ' + website),
                   ],
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                    child: ElevatedButton(
+                  child: Text('Mark as Unread'),
+                  onPressed: () {
+                    print(touched);
+                  },
+                )),
               ),
             ],
           ),
