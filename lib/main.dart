@@ -1,6 +1,4 @@
 import 'dart:convert';
-// import 'dart:html';
-// import 'dart:html';
 
 import 'package:baking_news_list/models/tags.dart';
 import 'package:baking_news_list/services/webservice.dart';
@@ -42,28 +40,19 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+enum MenuOption { Date, Title, Author, Original }
+
 class _HomePageState extends State<HomePage> {
   Future futureNews;
-  List<String> title = [];
-  List<String> authors = [];
-  List<String> content = [];
-  List<String> date = [];
-  List<String> image = [];
-  List<String> website = [];
   Tags tags;
-  int sort = 0;
-  List<int> test;
-  bool fdac = false;
   News _news;
-  List<News> novas = [];
+  List<News> newsDataView = [];
   List<String> enumValues = [];
-  final String whichSort = 'Sort by ';
   bool isPassed = false;
-  List<bool> isTouched = [];
-  TextStyle notTouched = GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold);
   TextStyle touched = GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.normal);
+  TextStyle notTouched = GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold);
 
-  List news = [];
+  final String whichSort = 'Sort by ';
 
   @override
   void initState() {
@@ -78,55 +67,36 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
-          // IconButton(
-          //   icon: Icon(Icons.sort),
-          //   onPressed: () {
-          //     setState(() {
-          //       Comparator<News> datas = (a, b) => a.date.compareTo(b.date);
-          //       novas.sort(datas);
-          //     });
-          //
-          //     print(novas.elementAt(0).title);
-          //   },
-          // ),
-          // Sort by data
-          // Comparator<News> datas = (a, b) => a.date.compareTo(b.date);
-          // novas.sort(datas);
-
-          // Sort by title
-          // Comparator<News> titulos = (a, b) => a.title.compareTo(b.title);
-          // novas.sort(titulos);
-
-          // Sort by author
-          // Comparator<News> autores = (a, b) => a.authors.compareTo(b.authors);
-          // novas.sort(autores);
-          // PopupOptionMenu(),
           PopupMenuButton<MenuOption>(
               onSelected: (MenuOption result) {
                 print(result);
                 if (result.index == 0) {
                   setState(() {
                     // novas = [_news];
-                    Comparator<News> datas = (a, b) => a.date.compareTo(b.date);
-                    novas.sort(datas);
+                    Comparator<News> dateSort = (a, b) => a.date.compareTo(b.date);
+                    newsDataView.sort(dateSort);
                   });
                 } else if (result.index == 1) {
                   setState(() {
-                    Comparator<News> titulos = (a, b) => a.title.compareTo(b.title);
-                    novas.sort(titulos);
+                    Comparator<News> titleSort = (a, b) => a.title.compareTo(b.title);
+                    newsDataView.sort(titleSort);
                   });
                 } else if (result.index == 2) {
                   setState(() {
-                    Comparator<News> autores = (a, b) => a.authors.compareTo(b.authors);
-                    novas.sort(autores);
+                    Comparator<News> authorSort = (a, b) => a.authors.compareTo(b.authors);
+                    newsDataView.sort(authorSort);
                   });
                 } else {
                   isPassed = false;
                   setState(() {
-                    novas;
+                    newsDataView;
                   });
                 }
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sorted by ' + enumValues.elementAt(result.index))));
+                if (result.index == 3) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sort and read/unread restarted')));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sorted by ' + enumValues.elementAt(result.index))));
+                }
               },
               icon: Icon(Icons.sort),
               itemBuilder: (BuildContext context) {
@@ -135,7 +105,6 @@ class _HomePageState extends State<HomePage> {
                 }
                 return <PopupMenuEntry<MenuOption>>[
                   PopupMenuItem(
-                    // child: Text('save'),
                     child: Text(whichSort + enumValues.elementAt(0)),
                     value: MenuOption.Date,
                   ),
@@ -162,15 +131,9 @@ class _HomePageState extends State<HomePage> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
                 if (isPassed == false) {
-                  novas = [];
-                  for (var i = 0; i < snapshot.data.length; i++) {
-                    // title.add(snapshot.data[i].title);
-                    // authors.add(snapshot.data[i].authors);
-                    // content.add(snapshot.data[i].content);
-                    // date.add(snapshot.data[i].date);
-                    // image.add(snapshot.data[i].imageUrl);
-                    // website.add(snapshot.data[i].website);
+                  newsDataView = [];
 
+                  for (var i = 0; i < snapshot.data.length; i++) {
                     _news = new News(
                       title: snapshot.data[i].title,
                       authors: snapshot.data[i].authors,
@@ -182,80 +145,62 @@ class _HomePageState extends State<HomePage> {
                       test: false,
                     );
 
-                    novas.add(_news);
-                    isTouched.add(false);
-
-                    // print(_news.title);
-                    // var newsInfo = {
-                    //   'title': snapshot.data[i].title,
-                    //   'authors': snapshot.data[i].authors,
-                    //   'content': snapshot.data[i].content,
-                    //   'date': snapshot.data[i].date,
-                    //   'image': snapshot.data[i].imageUrl,
-                    //   'website': snapshot.data[i].website
-                    // };
-                    // news.add(newsInfo);
+                    newsDataView.add(_news);
                   }
                   isPassed = true;
                 }
-                print(novas.elementAt(0).tags.elementAt(0).label);
 
-                // print(date);
-                // date.sort();
-                // print(date);
                 return ListView.separated(
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      // contentPadding: EdgeInsets.symmetric(horizontal: 0.0),
+                      // contentPadding: EdgeInsets.fromLTRB(0, 0, 16, 0), // Can uncomment this to make image touch the left side of the screen
                       leading: Image.network(
                         StringUtils.addCharAtPosition(
-                            novas.elementAt(index).imageUrl, 's', 4), // I added the 's' char because of this -> https://flutter.dev/docs/release/breaking-changes/network-policy-ios-android
+                            newsDataView.elementAt(index).imageUrl, 's', 4), // I added the 's' char because of this -> https://flutter.dev/docs/release/breaking-changes/network-policy-ios-android
                       ),
                       title: Text(
-                        novas.elementAt(index).title,
-                        style: novas.elementAt(index).test ? touched : notTouched,
+                        newsDataView.elementAt(index).title,
+                        style: newsDataView.elementAt(index).test ? touched : notTouched,
                       ),
                       subtitle: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(child: Text(novas.elementAt(index).authors)),
-                          Text(novas.elementAt(index).date),
+                          Expanded(child: Text(newsDataView.elementAt(index).authors)),
+                          Text(newsDataView.elementAt(index).date),
                         ],
                       ),
                       onTap: () {
-                        print('item ' + index.toString() + ' was touched');
                         setState(() {
-                          novas.elementAt(index).test = true;
+                          newsDataView.elementAt(index).test = true;
                         });
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => Detail(
-                              title: novas.elementAt(index).title,
-                              author: novas.elementAt(index).authors,
-                              content: novas.elementAt(index).content,
-                              date: novas.elementAt(index).date,
-                              image: StringUtils.addCharAtPosition(novas.elementAt(index).imageUrl, 's', 4),
-                              website: novas.elementAt(index).website,
-                              tags: novas.elementAt(index).tags.elementAt(0),
-                              touched: novas.elementAt(index).test,
+                              title: newsDataView.elementAt(index).title,
+                              author: newsDataView.elementAt(index).authors,
+                              content: newsDataView.elementAt(index).content,
+                              date: newsDataView.elementAt(index).date,
+                              image: StringUtils.addCharAtPosition(newsDataView.elementAt(index).imageUrl, 's', 4),
+                              website: newsDataView.elementAt(index).website,
+                              tags: newsDataView.elementAt(index).tags.elementAt(0),
+                              touched: newsDataView.elementAt(index).test,
                             ),
                           ),
                         );
                       },
                       onLongPress: () {
                         setState(() {
-                          novas.elementAt(index).test = false;
+                          newsDataView.elementAt(index).test = false;
                         });
-                        print('LOOOOOOOOOOOOONG');
                       },
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) {
                     return Divider(
-                      indent: 20,
-                      endIndent: 20,
+                      indent: 110,
+                      thickness: 1.0,
                     );
                   },
                 );
@@ -270,45 +215,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-// testSort() {
-//   setState(() {
-//     Comparator<News> datas = (a, b) => a.date.compareTo(b.date);
-//     novas.sort(datas);
-//   });
-// }
-
-enum MenuOption { Date, Title, Author, Original }
-
-// class PopupOptionMenu extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return PopupMenuButton<MenuOption>(
-//         onSelected: (MenuOption result) {
-//           if (result.index == 0) {
-//             print(result);
-//           }
-//         },
-//         icon: Icon(Icons.sort),
-//         itemBuilder: (BuildContext context) {
-//           return <PopupMenuEntry<MenuOption>>[
-//             PopupMenuItem(
-//               // child: Text('save'),
-//               child: Icon(
-//                 Icons.sort,
-//                 color: Colors.black87,
-//               ),
-//               value: MenuOption.Save,
-//             ),
-//             PopupMenuItem(
-//               child: Text('Discard'),
-//               value: MenuOption.Discard,
-//             ),
-//             PopupMenuItem(
-//               child: Text('Draft'),
-//               value: MenuOption.Draft,
-//             ),
-//           ];
-//         });
-//   }
-// }
