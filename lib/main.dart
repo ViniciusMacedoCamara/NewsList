@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                       imageUrl: snapshot.data[i].imageUrl,
                       website: snapshot.data[i].website,
                       tags: snapshot.data[i].tags,
-                      test: false,
+                      isRead: false,
                     );
 
                     newsDataView.add(_news);
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       title: Text(
                         newsDataView.elementAt(index).title,
-                        style: newsDataView.elementAt(index).test ? touched : notTouched,
+                        style: newsDataView.elementAt(index).isRead ? touched : notTouched,
                       ),
                       subtitle: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -171,7 +171,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       onTap: () {
                         setState(() {
-                          newsDataView.elementAt(index).test = true;
+                          newsDataView.elementAt(index).isRead = true;
                         });
                         Navigator.push(
                           context,
@@ -184,14 +184,14 @@ class _HomePageState extends State<HomePage> {
                               image: StringUtils.addCharAtPosition(newsDataView.elementAt(index).imageUrl, 's', 4),
                               website: newsDataView.elementAt(index).website,
                               tags: newsDataView.elementAt(index).tags.elementAt(0),
-                              touched: newsDataView.elementAt(index).test,
+                              touched: newsDataView.elementAt(index).isRead,
                             ),
                           ),
                         );
                       },
                       onLongPress: () {
                         setState(() {
-                          newsDataView.elementAt(index).test = false;
+                          newsDataView.elementAt(index).isRead = false;
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Item ' + (index + 1).toString() + ' is now marked as Unread')));
                         });
                       },

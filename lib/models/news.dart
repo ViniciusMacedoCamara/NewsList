@@ -8,9 +8,9 @@ class News {
   String content;
   List<Tags> tags;
   String imageUrl;
-  bool test;
+  bool isRead;
 
-  News({this.title, this.website, this.authors, this.date, this.content, this.tags, this.imageUrl, this.test});
+  News({this.title, this.website, this.authors, this.date, this.content, this.tags, this.imageUrl, this.isRead});
 
   News.fromJson(Map<String, dynamic> json) {
     title = json['title'];
