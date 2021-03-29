@@ -1,6 +1,7 @@
 import 'package:baking_news_list/models/tags.dart';
 import 'package:baking_news_list/services/webservice.dart';
 import 'package:baking_news_list/splashscreen.dart';
+import 'package:baking_news_list/view/about.dart';
 import 'package:basic_utils/basic_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,7 +35,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-enum MenuOption { Date, Title, Author, Original }
+enum MenuOption { Date, Title, Author, Original, About }
 
 class _HomePageState extends State<HomePage> {
   Future futureNews;
@@ -77,6 +78,13 @@ class _HomePageState extends State<HomePage> {
                     Comparator<News> authorSort = (a, b) => a.authors.compareTo(b.authors);
                     newsDataView.sort(authorSort);
                   });
+                } else if (result.index == 4) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => About(),
+                    ),
+                  );
                 } else {
                   isPassed = false;
                   setState(() {
@@ -85,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                 }
                 if (result.index == 3) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sort and read/unread restarted')));
-                } else {
+                } else if (result.index == 0 || result.index == 1 || result.index == 2) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sorted by ' + enumValues.elementAt(result.index))));
                 }
               },
@@ -110,6 +118,10 @@ class _HomePageState extends State<HomePage> {
                   PopupMenuItem(
                     child: Text(whichSort + enumValues.elementAt(3)),
                     value: MenuOption.Original,
+                  ),
+                  PopupMenuItem(
+                    child: Text(enumValues.elementAt(4)),
+                    value: MenuOption.About,
                   ),
                 ];
               }),
@@ -147,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                     return ListTile(
                       contentPadding: EdgeInsets.fromLTRB(0, 0, 16, 0), // Can uncomment this to make image touch the left side of the screen
                       leading: CachedNetworkImage(
-                        placeholder: (context, url) => CircularProgressIndicator(),
+                        // placeholder: (context, url) => CircularProgressIndicator(), // Can uncomment this to enable progress indicator
                         imageUrl: StringUtils.addCharAtPosition(
                             newsDataView.elementAt(index).imageUrl, 's', 4), // I added the 's' char because of this -> https://flutter.dev/docs/release/breaking-changes/network-policy-ios-android,
                         errorWidget: (context, url, error) => Icon(Icons.error),
