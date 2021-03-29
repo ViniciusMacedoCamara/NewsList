@@ -5,11 +5,8 @@ import 'package:basic_utils/basic_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert' as convert;
 import 'package:baking_news_list/models/news.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'view/details.dart';
 
 void main() {
@@ -20,7 +17,6 @@ class NewsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'News',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
@@ -56,7 +52,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     futureNews = new WebService().fetchNews();
-    // test = [4, 0, 3, 5, 1, 2];
   }
 
   @override
