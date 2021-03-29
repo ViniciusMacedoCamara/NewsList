@@ -1,7 +1,6 @@
 import 'package:baking_news_list/models/tags.dart';
 import 'package:baking_news_list/services/webservice.dart';
 import 'package:baking_news_list/splashscreen.dart';
-import 'package:baking_news_list/view/newsTile.dart';
 import 'package:basic_utils/basic_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -48,8 +47,8 @@ class _HomePageState extends State<HomePage> {
   List<News> newsDataView = [];
   List<String> enumValues = [];
   bool isPassed = false;
-  TextStyle touched = GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.normal);
-  TextStyle notTouched = GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold);
+  TextStyle touched = GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.normal, color: Color(0xDE000000));
+  TextStyle notTouched = GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xDE000000));
 
   final String whichSort = 'Sort by ';
 
@@ -151,23 +150,28 @@ class _HomePageState extends State<HomePage> {
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      // contentPadding: EdgeInsets.fromLTRB(0, 0, 16, 0), // Can uncomment this to make image touch the left side of the screen
+                      contentPadding: EdgeInsets.fromLTRB(0, 0, 16, 0), // Can uncomment this to make image touch the left side of the screen
                       leading: CachedNetworkImage(
                         placeholder: (context, url) => CircularProgressIndicator(),
                         imageUrl: StringUtils.addCharAtPosition(
                             newsDataView.elementAt(index).imageUrl, 's', 4), // I added the 's' char because of this -> https://flutter.dev/docs/release/breaking-changes/network-policy-ios-android,
                         errorWidget: (context, url, error) => Icon(Icons.error),
+                        width: 100.0,
+                        fit: BoxFit.cover,
                       ),
                       title: Text(
                         newsDataView.elementAt(index).title,
                         style: newsDataView.elementAt(index).isRead ? touched : notTouched,
                       ),
-                      subtitle: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(child: Text(newsDataView.elementAt(index).authors)),
-                          Text(newsDataView.elementAt(index).date),
-                        ],
+                      subtitle: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(child: Text(newsDataView.elementAt(index).authors)),
+                            Text(newsDataView.elementAt(index).date),
+                          ],
+                        ),
                       ),
                       onTap: () {
                         setState(() {
