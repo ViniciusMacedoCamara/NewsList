@@ -14,9 +14,8 @@ PS: if you notice the functionality to mark as unread this is included in the lo
 
 ## About the author:
 
-Vinicius Macedo Camara
-25 years old
-Balneário Camboriú to the 🌎
+Vinicius Macedo Camara, 25 years old, Balneário Camboriú to the 🌎
+
 [My Linkedin](https://www.linkedin.com/in/vin%C3%ADcius-macedo-bb46ba40/)
 
 Android developer, creating with Java and Realm for 2 years. Shortening the gap between Designers and Devs. Based in Balneário Camboriú, Brazil. Available to move worldwide 🌎 and work remotely.
