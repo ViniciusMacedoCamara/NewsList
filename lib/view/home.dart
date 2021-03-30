@@ -43,6 +43,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        // Popup menu for the user sort by Date | Title | Author and reset the list with the Original. There is also a About page
         actions: <Widget>[
           PopupMenuButton<MenuOption>(
               onSelected: (MenuOption result) {
@@ -74,6 +75,7 @@ class _HomePageState extends State<HomePage> {
                     newsDataView;
                   });
                 }
+                // Shows a SnackBar to confirm what kinda of sort the user selected
                 if (result.index == 3) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sort and read/unread restarted')));
                 } else if (result.index == 0 || result.index == 1 || result.index == 2) {
@@ -82,9 +84,11 @@ class _HomePageState extends State<HomePage> {
               },
               icon: Icon(Icons.sort),
               itemBuilder: (BuildContext context) {
+                // Substring the menu option enum once and used it in the view
                 for (MenuOption menuOption in MenuOption.values) {
                   enumValues.add(menuOption.toString().substring(menuOption.toString().indexOf('.') + 1));
                 }
+                // View for popup menu
                 return <PopupMenuEntry<MenuOption>>[
                   PopupMenuItem(
                     child: Text(whichSort + enumValues.elementAt(0)),
@@ -112,6 +116,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SafeArea(
         child: Center(
+          // Here is where the news list is created and rendered
           child: FutureBuilder<List<News>>(
             future: futureNews,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -119,6 +124,7 @@ class _HomePageState extends State<HomePage> {
                 if (isPassed == false) {
                   newsDataView = [];
 
+                  // Add News into a list to be able to sort it
                   for (var i = 0; i < snapshot.data.length; i++) {
                     _news = new News(
                       title: snapshot.data[i].title,
@@ -164,9 +170,11 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       onTap: () {
+                        // Change the state to check what tile was selected to change the font style
                         setState(() {
                           newsDataView.elementAt(index).isRead = true;
                         });
+                        // Push the selected tile into details page
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -184,6 +192,7 @@ class _HomePageState extends State<HomePage> {
                         );
                       },
                       onLongPress: () {
+                        // Mark as unread and shows a SnackBar
                         setState(() {
                           newsDataView.elementAt(index).isRead = false;
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Item ' + (index + 1).toString() + ' is now marked as Unread')));
@@ -199,6 +208,8 @@ class _HomePageState extends State<HomePage> {
                   },
                 );
               } else if (snapshot.hasError) {
+                // In case user don't have internet when the app starts, this containers shows up
+                // There is a button for the user to click when ensuring that the internet is back
                 return SingleChildScrollView(
                   child: Container(
                     child: Column(

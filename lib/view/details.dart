@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// This is a pretty simple page, used only to render the details passed by the home page file
+
 class Detail extends StatelessWidget {
   Detail({
     @required this.title,

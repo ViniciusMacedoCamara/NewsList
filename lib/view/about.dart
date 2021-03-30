@@ -86,8 +86,6 @@ class About extends StatelessWidget {
                 SizedBox(height: 16),
                 Text("I've worked on web and mobile projects in multidisciplinary teams and I'm familiar with agile methodologies and most popular softwares."),
                 SizedBox(height: 16),
-                Text("All people matter 💪"),
-                SizedBox(height: 16),
                 Text("Feel free to contact me with you want to chat about design or if you're interested in my work."),
               ],
             ),
